@@ -9,11 +9,11 @@ import "src/TwapObserver.sol";
 
 contract ExampleTwapObserverTest is Test {
     ExampleTwap twapAcc;
-    ExampleTwapObserver twapTester;
+    TwapObserver twapTester;
 
     function setUp() public {
         twapAcc = new ExampleTwap(0);
-        twapTester = new ExampleTwapObserver(address(twapAcc));
+        twapTester = new TwapObserver(address(twapAcc));
     }
 
     function _log() internal {
