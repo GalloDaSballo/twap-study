@@ -5,7 +5,7 @@ pragma solidity 0.8.17;
 import {ExampleTwap} from "./ExampleTwap.sol";
 import "forge-std/console2.sol";
 
-contract ExampleTwapObserver {
+contract TwapObserver {
     // last PriceCum
     // last T0
 
