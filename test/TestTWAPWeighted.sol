@@ -40,21 +40,20 @@ contract ExampleTwapObserverTest is Test {
         uint256 startTime = block.timestamp;
         uint256 number_of_increases = 1 weeks / 1 hours;
         uint256 counter;
-        
-        while(counter < number_of_increases) {
+
+        while (counter < number_of_increases) {
             vm.warp(startTime + 1 hours * counter++);
             _log();
             twapTesterWeighted.update();
             twapStepWise.update();
-
 
             // Random Price change on each turn
             // Let's assume up to 1k times increase
             // and a decrease of up to 99%
             uint256 currentValue = twapAcc.getRealValue();
             uint256 prng = uint256(bytes32(keccak256(abi.encode(block.timestamp))));
-            if(prng % 2 == 0) {
-                if(currentValue > 10000) {
+            if (prng % 2 == 0) {
+                if (currentValue > 10000) {
                     continue;
                 }
                 // Increase
@@ -62,16 +61,13 @@ contract ExampleTwapObserverTest is Test {
                 uint256 increasePercent = prng / 10 % 100; // /10 so we don't re-use the same value
                 twapAcc.setValue(currentValue + (currentValue * increasePercent / 100));
             } else {
-                if(currentValue < 100) {
+                if (currentValue < 100) {
                     continue;
                 }
                 // Decrease
                 uint256 decreasePercent = prng / 10 % 100 / 2; // / 2  as to avoid reducing to 1 all the time
                 twapAcc.setValue(currentValue - (currentValue * decreasePercent / 100));
-
             }
-            
-
         }
     }
 }
