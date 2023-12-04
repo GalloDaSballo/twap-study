@@ -4,9 +4,9 @@ pragma solidity 0.8.17;
 
 contract ExampleTwap {
     uint256 public accumulator;
-    uint256 public lastUpdate;
+    uint64 public lastUpdate;
 
-    uint256 public valueToTrack;
+    uint256 public valueToTrack; // Would be Total Debt from AP
 
     constructor(uint256 initialValue) {
         // Update to last value from beginning
@@ -21,7 +21,7 @@ contract ExampleTwap {
     function setValue(uint256 newValue) external {
         _updateAcc(valueToTrack);
 
-        lastUpdate = block.timestamp;
+        lastUpdate = uint64(block.timestamp);
         valueToTrack = newValue;
     }
 

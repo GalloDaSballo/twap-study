@@ -10,7 +10,7 @@ contract TwapObserver {
     // last T0
 
     uint256 priceCum0;
-    uint256 t0;
+    uint64 t0;
     uint256 avgValue;
 
     uint256 constant PERIOD = 7 days;
@@ -21,7 +21,7 @@ contract TwapObserver {
         REFERENCE_TWAP = ExampleTwap(twap);
 
         priceCum0 = ExampleTwap(twap).getLatestAccumulator();
-        t0 = block.timestamp;
+        t0 = uint64(block.timestamp);
         avgValue = ExampleTwap(twap).getRealValue();
     }
 
@@ -39,7 +39,7 @@ contract TwapObserver {
 
             // Then we update
             priceCum0 = REFERENCE_TWAP.getLatestAccumulator();
-            t0 = block.timestamp;
+            t0 = uint64(block.timestamp);
         }
     }
 }
