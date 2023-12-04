@@ -4,8 +4,8 @@ pragma solidity 0.8.17;
 
 import "forge-std/Test.sol";
 import "forge-std/console2.sol";
-import "src/RelativeTwapWeightedObserver_Reference.sol";
-import "src/RelativeTwapWeightedObserver_Optimized.sol";
+import "src/REFERENCE_RelativeTwapWeightedObserver.sol";
+import "src/OPTIMIZED_RelativeTwapWeightedObserver.sol";
 
 contract ExampleTwapTest is Test {
     REFERENCE_RelativeTwapWeightedObserver twapReference;

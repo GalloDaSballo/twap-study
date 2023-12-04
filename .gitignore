@@ -9,3 +9,7 @@ out/
 
 # Dotenv file
 .env
+
+
+# Medusa (although corpus is good tbf)
+/medusa

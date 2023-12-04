@@ -1,8 +1,5 @@
 // SPDX-License Identifier: MIT
-
 pragma solidity 0.8.17;
-
-import "forge-std/console2.sol";
 
 contract OPTIMIZED_RelativeTwapWeightedObserver {
     // NOTE: Packing manually is cheaper, but this is simpler for everyone to understand and follow
