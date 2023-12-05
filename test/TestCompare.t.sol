@@ -21,7 +21,7 @@ contract ExampleTwapTest is Test {
 
     function _compare() internal {
         assertEq(twapReference.observe(), twapOptimized.observe(), "observe();");
-        assertEq(twapReference.observe(), twapOptimizedInlined.observe(), "observe();");
+        assertEq(twapReference.observe(), twapOptimizedInlined.observeOptimized(), "observe();");
         assertEq(twapReference.getRealValue(), twapOptimized.getRealValue(), "getRealValue();");
         assertEq(twapReference.getRealValue(), twapOptimizedInlined.getRealValue(), "getRealValue();");
 
