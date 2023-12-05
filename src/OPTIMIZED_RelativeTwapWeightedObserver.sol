@@ -4,11 +4,21 @@ pragma solidity 0.8.17;
 contract OPTIMIZED_RelativeTwapWeightedObserver {
     // NOTE: Packing manually is cheaper, but this is simpler for everyone to understand and follow
     struct PackedData {
-        uint128 priceCumulative0; // Divide the value by 5e19
-        uint128 accumulator; // Divide the value by 5e19
-        uint64 t0;
-        uint64 lastUpdate;
-        uint128 avgValue; // Expect eBTC debt to never surpass 100e27, which is 100 BILLION eBTC
+        // Slot 0
+
+        // Seconds in a year: 3.154e+7
+        uint128 priceCumulative0; // 3.154e+7 * 80 * 100e27 = 2.5232e+38 | log_2(100e27 * 3.154e+7 * 80) = 127.568522171
+        uint128 accumulator; // 3.154e+7 * 80 * 100e27 = 2.5232e+38 | log_2(100e27 * 3.154e+7 * 80) = 127.568522171
+        // NOTE: We can further compress this slot but we will not be able to use only one (see u72 impl)
+        /// So what's the point of making the code more complex?
+
+        // Slot 1
+        uint64 t0; // Thousands of Years, if we use relative time we can use u32 | Relative to deploy time (as immutable)
+        uint64 lastUpdate; // Thousands of years
+        // Expect eBTC debt to never surpass 100e27, which is 100 BILLION eBTC
+        // log_2(100e27) = 96.3359147517 | log_2(100e27 / 1e18) = 36.5412090438
+        // We could use a u64
+        uint128 avgValue;
     }
 
     PackedData data;
@@ -40,8 +50,6 @@ contract OPTIMIZED_RelativeTwapWeightedObserver {
         data.lastUpdate = uint64(block.timestamp);
         valueToTrack = newValue;
     }
-
-    // TODO: Most likely best to read as struct, which requires further refactoring
 
     // Update the accumulator based on time passed
     function _updateAcc(uint128 oldValue) internal {
@@ -86,13 +94,14 @@ contract OPTIMIZED_RelativeTwapWeightedObserver {
         // For each second passed after update
         // Let's virtally sync TWAP
         // With a weight, that is higher, the more time has passed
-        uint256 virtualAvgValue = (getLatestAccumulator() - data.priceCumulative0) / (uint64(block.timestamp) - data.t0);
+        uint128 priceCum0 = getLatestAccumulator();
+        uint128 virtualAvgValue = (priceCum0 - data.priceCumulative0) / (uint64(block.timestamp) - data.t0);
 
         uint256 futureWeight = block.timestamp - data.t0;
         uint256 maxWeight = PERIOD;
 
         if (futureWeight > maxWeight) {
-            update(); // May as well update
+            _update(virtualAvgValue, priceCum0, uint64(block.timestamp)); // May as well update
             // Return virtual
             return virtualAvgValue;
         }
@@ -108,13 +117,22 @@ contract OPTIMIZED_RelativeTwapWeightedObserver {
     function update() public {
         // On epoch flip, we update as intended
         if (block.timestamp >= data.t0 + PERIOD) {
-            // Compute based on delta
-            data.avgValue = (getLatestAccumulator() - data.priceCumulative0) / (uint64(block.timestamp) - data.t0);
+            uint128 latestAcc = getLatestAccumulator();
 
-            // Then we update
-            data.priceCumulative0 = getLatestAccumulator();
-            data.t0 = uint64(block.timestamp);
+            // Compute based on delta
+            uint128 avgValue = (latestAcc - data.priceCumulative0) / (uint64(block.timestamp) - data.t0);
+            uint128 priceCum0 = latestAcc;
+            uint64 time0 = uint64(block.timestamp);
+
+            _update(avgValue, priceCum0, time0);
         }
+    }
+
+    /// Internal update so we can call it both in _update and in observe
+    function _update(uint128 avgValue, uint128 priceCum0, uint64 time0) internal {
+        data.avgValue = avgValue;
+        data.priceCumulative0 = priceCum0;
+        data.t0 = time0;
     }
 
     /// END TWAP WEIGHTED OBSERVER ///

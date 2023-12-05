@@ -104,14 +104,14 @@ contract U72_OptimizedTwap {
         // TODO: Am I supposed to compress the value? Pretty sure it causes further loss
         console2.log("_syncToNow");
 
-        uint128 uncompressedAccumulator =_undoCompressionFromU72(data.compressedAccumulator);
+        uint128 uncompressedAccumulator = _undoCompressionFromU72(data.compressedAccumulator);
         console2.log("_syncToNow 1");
         uint128 toAddUncompressed = valueToTrack * timeToAccrue();
         console2.log("_syncToNow 2");
 
         uint128 sum = uncompressedAccumulator + toAddUncompressed;
         console2.log("_syncToNow 3");
-        
+
         return sum;
     }
 
@@ -146,8 +146,7 @@ contract U72_OptimizedTwap {
         // With a weight, that is higher, the more time has passed
         uint256 diffAcc = getLatestAccumulator() - _undoCompressionFromU72(data.compressedPriceCumulative0);
         console2.log("92");
-        uint256 virtualAvgValue = (diffAcc)
-            / (uint32(block.timestamp) - data.t0);
+        uint256 virtualAvgValue = (diffAcc) / (uint32(block.timestamp) - data.t0);
         console2.log("2");
 
         uint256 futureWeight = block.timestamp - data.t0;

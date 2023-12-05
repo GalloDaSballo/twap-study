@@ -18,7 +18,12 @@ contract ExampleTwapTest is Test {
 
     function _compare() internal {
         // Same within 1e18 order
-        assertApproxEqAbs(twapReference.observe() / 1e18 * 1e18, uint256(twapOptimizedInlined.observe()) / 1e18 * 1e18, 1e18, "BROKEN_OBSERVE");
+        assertApproxEqAbs(
+            twapReference.observe() / 1e18 * 1e18,
+            uint256(twapOptimizedInlined.observe()) / 1e18 * 1e18,
+            1e18,
+            "BROKEN_OBSERVE"
+        );
         assertEq(twapReference.getRealValue(), twapOptimizedInlined.getRealValue(), "BROKEN_REAL_VALUE");
 
         console2.log(twapReference.timeToAccrue(), uint256(twapOptimizedInlined.timeToAccrue()), "timeToAccrue();");
