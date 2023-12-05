@@ -1,10 +1,10 @@
 // SPDX-License Identifier: MIT
-
 pragma solidity 0.8.17;
 
-import "forge-std/console2.sol";
+// NOTE: This is DANGEROUS unless you know exactly what you're doing
+// NOTE: This is missing division, so this CAN overflow given sufficient time
 
-contract OPTIMIZED_RelativeTwapWeightedObserver {
+contract INLINED_OPTIMIZED_RelativeTwapWeightedObserver {
     // NOTE: Packing manually is cheaper, but this is simpler for everyone to understand and follow
     struct PackedData {
         uint128 priceCumulative0; // Divide the value by 5e19
@@ -48,7 +48,7 @@ contract OPTIMIZED_RelativeTwapWeightedObserver {
 
     // Update the accumulator based on time passed
     function _updateAcc(uint128 oldValue) internal {
-        data.accumulator += oldValue * (timeToAccrue());
+        data.accumulator += oldValue * (uint64(block.timestamp) - data.lastUpdate);
     }
 
     // Safe for Tens of Thousand of Years
@@ -108,6 +108,56 @@ contract OPTIMIZED_RelativeTwapWeightedObserver {
         return weightedMean;
     }
 
+    function observeOptimized() external returns (uint256) {
+        // Here, we need to apply the new accumulator to skew the price in some way
+        // The weight of the skew should be proportional to the time passed
+        uint64 deltaTime = uint64(block.timestamp) - data.t0;
+
+        if (deltaTime == 0) {
+            return data.avgValue;
+        }
+
+        // A reference period is 7 days
+        // For each second passed after update
+        // Let's virtally sync TWAP
+        // With a weight, that is higher, the more time has passed
+
+        // getLatestAccumulator -> return data.accumulator + (valueToTrack * (timeToAccrue()));
+        // timeToAccrue -> uint64(block.timestamp) - data.lastUpdate;
+        uint64 timeToAccrueCached = uint64(block.timestamp) - data.lastUpdate;
+        uint128 latestAcc = data.accumulator + (valueToTrack * (timeToAccrueCached));
+
+        // TODO: Maybe we can change this in case of overflow
+
+        uint128 virtualAvgValue = (latestAcc - data.priceCumulative0) / (uint64(block.timestamp) - deltaTime);
+
+        /// If more than PERIOD passed, we observe a new one
+        // PERIOD is capped, so it's ok
+        if (deltaTime > PERIOD) {
+            // UpdateFromCachedLookup is inlined to save gas
+            data.avgValue = virtualAvgValue;
+
+            // Then we update
+            data.priceCumulative0 = latestAcc;
+            data.t0 = uint64(block.timestamp);
+
+            // Return virtual
+            return virtualAvgValue;
+        }
+
+        uint256 maxWeight = PERIOD;
+        uint256 futureWeight = deltaTime;
+
+        uint256 weightedAvg = data.avgValue * (maxWeight - futureWeight);
+        uint256 weightedVirtual = virtualAvgValue * (futureWeight);
+
+        // By definition SUM(maxWeight - futureWeight + futureWeight) = maxWeight
+        uint256 weightedMean = (weightedAvg + weightedVirtual) / PERIOD;
+
+        return weightedMean;
+    }
+
+    // Anybody can call this
     function update() public {
         // On epoch flip, we update as intended
         if (block.timestamp >= data.t0 + PERIOD) {
