@@ -6,9 +6,23 @@ pragma solidity 0.8.17;
 import "./EchidnaProperties.sol";
 
 abstract contract TargetFunctions is EchidnaProperties {
-    function setValue(uint128 newValue) public {
-        base.setValue(newValue);
-        optimized.setValue(newValue);
+
+
+    // log_2(100e27) == 96.X
+    function setValue(uint104 newValue) public {
+        bool baseSuccess;
+        try base.setValue(newValue) {
+            baseSuccess = true;
+        } catch (bytes memory err) {
+            
+        }
+
+        // if optimized reverts, then base must have reverted as well
+        try optimized.setValue(newValue) {
+            t(baseSuccess, "Both must succeed");
+        } catch (bytes memory err) {
+            t(!baseSuccess, "Must both revert");
+        }
     }
 
     function timeToAccrue() public {
@@ -24,8 +38,25 @@ abstract contract TargetFunctions is EchidnaProperties {
     }
 
     function observe() external {
-        uint256 fromBase = base.observe();
-        uint256 fromOptimized = uint256(optimized.observe());
+        uint256 fromBase;
+        uint256 fromOptimized;
+        
+        bool baseSuccess;
+
+        try base.observe() returns (uint256 baseV) {
+            baseSuccess = true;
+            fromBase = baseV;
+        } catch (bytes memory err) {
+            
+        }
+
+        // if optimized reverts, then base must have reverted as well
+        try optimized.observe() returns (uint256 baseV) {
+             fromOptimized = baseV;
+        } catch (bytes memory err) {
+            t(!baseSuccess, "Must both revert");
+        }
+
         eq(fromBase, fromOptimized, "Observe");
     }
 
