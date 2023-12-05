@@ -13,6 +13,7 @@ contract ExampleTwap {
         // The first value is basically insanely strong
         valueToTrack = initialValue;
         accumulator = 0 * block.timestamp;
+        lastUpdate = uint64(block.timestamp);
     }
 
     // Set to new value, sync accumulator to now with old value
