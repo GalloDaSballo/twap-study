@@ -35,9 +35,9 @@ abstract contract TargetFunctions is BaseTargetFunctions, Properties, BeforeAfte
     }
 
     function oPTIMIZED_RelativeTwapWeightedObserver_observeGasGrief(uint256 gas) public {
-      standard{gas: gas}.observe(); // Only calls in which standard doesn't revert
+      standard.observe{gas: gas}(); // Only calls in which standard doesn't revert
 
-      try optimized{gas: gas}.observe() {} catch {
+      try optimized.observe{gas: gas}() {} catch {
         t(false, "Optimized fails when standard succeeds");
       }
       
