@@ -14,11 +14,11 @@ import "src/ExampleTwap.sol";
 
 abstract contract Setup is BaseSetup {
 
-    OPTIMIZED_RelativeTwapWeightedObserver oPTIMIZED_RelativeTwapWeightedObserver;
-    REFERENCE_RelativeTwapWeightedObserver rEFERENCE_RelativeTwapWeightedObserver;
+    OPTIMIZED_RelativeTwapWeightedObserver optimized;
+    REFERENCE_RelativeTwapWeightedObserver standard;
 
     function setup() internal virtual override {
-      oPTIMIZED_RelativeTwapWeightedObserver = new OPTIMIZED_RelativeTwapWeightedObserver(); // TODO: Add parameters here
-      rEFERENCE_RelativeTwapWeightedObserver = new REFERENCE_RelativeTwapWeightedObserver(); // TODO: Add parameters here
+      optimized = new OPTIMIZED_RelativeTwapWeightedObserver(0); // TODO: Add parameters here
+      standard = new REFERENCE_RelativeTwapWeightedObserver(0); // TODO: Add parameters here
     }
 }

@@ -23,28 +23,28 @@ abstract contract BeforeAfter is Setup {
     Vars internal _after;
 
     function __before() internal {
-        _before.oPTIMIZED_RelativeTwapWeightedObserver_getLatestAccumulator = oPTIMIZED_RelativeTwapWeightedObserver.getLatestAccumulator();
-        _before.oPTIMIZED_RelativeTwapWeightedObserver_getRealValue = oPTIMIZED_RelativeTwapWeightedObserver.getRealValue();
-        _before.oPTIMIZED_RelativeTwapWeightedObserver_timeToAccrue = oPTIMIZED_RelativeTwapWeightedObserver.timeToAccrue();
+        _before.oPTIMIZED_RelativeTwapWeightedObserver_getLatestAccumulator = optimized.getLatestAccumulator();
+        _before.oPTIMIZED_RelativeTwapWeightedObserver_getRealValue = optimized.getRealValue();
+        _before.oPTIMIZED_RelativeTwapWeightedObserver_timeToAccrue = optimized.timeToAccrue();
 
-        _before.rEFERENCE_RelativeTwapWeightedObserver_accumulator = rEFERENCE_RelativeTwapWeightedObserver.accumulator();
-        _before.rEFERENCE_RelativeTwapWeightedObserver_getLatestAccumulator = rEFERENCE_RelativeTwapWeightedObserver.getLatestAccumulator();
-        _before.rEFERENCE_RelativeTwapWeightedObserver_getRealValue = rEFERENCE_RelativeTwapWeightedObserver.getRealValue();
-        _before.rEFERENCE_RelativeTwapWeightedObserver_lastUpdate = rEFERENCE_RelativeTwapWeightedObserver.lastUpdate();
-        _before.rEFERENCE_RelativeTwapWeightedObserver_timeToAccrue = rEFERENCE_RelativeTwapWeightedObserver.timeToAccrue();
-        _before.rEFERENCE_RelativeTwapWeightedObserver_valueToTrack = rEFERENCE_RelativeTwapWeightedObserver.valueToTrack();
+        _before.rEFERENCE_RelativeTwapWeightedObserver_accumulator = standard.accumulator();
+        _before.rEFERENCE_RelativeTwapWeightedObserver_getLatestAccumulator = standard.getLatestAccumulator();
+        _before.rEFERENCE_RelativeTwapWeightedObserver_getRealValue = standard.getRealValue();
+        _before.rEFERENCE_RelativeTwapWeightedObserver_lastUpdate = standard.lastUpdate();
+        _before.rEFERENCE_RelativeTwapWeightedObserver_timeToAccrue = standard.timeToAccrue();
+        _before.rEFERENCE_RelativeTwapWeightedObserver_valueToTrack = standard.valueToTrack();
     }
 
     function __after() internal {
-        _after.oPTIMIZED_RelativeTwapWeightedObserver_getLatestAccumulator = oPTIMIZED_RelativeTwapWeightedObserver.getLatestAccumulator();
-        _after.oPTIMIZED_RelativeTwapWeightedObserver_getRealValue = oPTIMIZED_RelativeTwapWeightedObserver.getRealValue();
-        _after.oPTIMIZED_RelativeTwapWeightedObserver_timeToAccrue = oPTIMIZED_RelativeTwapWeightedObserver.timeToAccrue();
+        _after.oPTIMIZED_RelativeTwapWeightedObserver_getLatestAccumulator = optimized.getLatestAccumulator();
+        _after.oPTIMIZED_RelativeTwapWeightedObserver_getRealValue = optimized.getRealValue();
+        _after.oPTIMIZED_RelativeTwapWeightedObserver_timeToAccrue = optimized.timeToAccrue();
 
-        _after.rEFERENCE_RelativeTwapWeightedObserver_accumulator = rEFERENCE_RelativeTwapWeightedObserver.accumulator();
-        _after.rEFERENCE_RelativeTwapWeightedObserver_getLatestAccumulator = rEFERENCE_RelativeTwapWeightedObserver.getLatestAccumulator();
-        _after.rEFERENCE_RelativeTwapWeightedObserver_getRealValue = rEFERENCE_RelativeTwapWeightedObserver.getRealValue();
-        _after.rEFERENCE_RelativeTwapWeightedObserver_lastUpdate = rEFERENCE_RelativeTwapWeightedObserver.lastUpdate();
-        _after.rEFERENCE_RelativeTwapWeightedObserver_timeToAccrue = rEFERENCE_RelativeTwapWeightedObserver.timeToAccrue();
-        _after.rEFERENCE_RelativeTwapWeightedObserver_valueToTrack = rEFERENCE_RelativeTwapWeightedObserver.valueToTrack();
+        _after.rEFERENCE_RelativeTwapWeightedObserver_accumulator = standard.accumulator();
+        _after.rEFERENCE_RelativeTwapWeightedObserver_getLatestAccumulator = standard.getLatestAccumulator();
+        _after.rEFERENCE_RelativeTwapWeightedObserver_getRealValue = standard.getRealValue();
+        _after.rEFERENCE_RelativeTwapWeightedObserver_lastUpdate = standard.lastUpdate();
+        _after.rEFERENCE_RelativeTwapWeightedObserver_timeToAccrue = standard.timeToAccrue();
+        _after.rEFERENCE_RelativeTwapWeightedObserver_valueToTrack = standard.valueToTrack();
     }
 }

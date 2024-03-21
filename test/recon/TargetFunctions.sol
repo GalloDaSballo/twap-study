@@ -9,27 +9,55 @@ import {vm} from "@chimera/Hevm.sol";
 
 abstract contract TargetFunctions is BaseTargetFunctions, Properties, BeforeAfter {
 
+    // Compare
+    // Telling the fuzzer that the optimized must match the standard
+
     function oPTIMIZED_RelativeTwapWeightedObserver_observe() public {
-      oPTIMIZED_RelativeTwapWeightedObserver.observe();
+      uint256 fromOptimized;
+      uint256 fromStandard;
+      bool optimizedRevert;
+      bool standardRevert;
+
+      try optimized.observe() returns (uint256 val) {
+        fromOptimized = val;
+      } catch {
+        optimizedRevert = true;
+      }
+
+      try standard.observe() returns (uint256 val) {
+        fromStandard = val;
+      } catch {
+        standardRevert = true;
+      }
+
+      t(fromOptimized == fromStandard, "must match");
+      t(optimizedRevert == standardRevert, "must match revert");
     }
 
+    function oPTIMIZED_RelativeTwapWeightedObserver_observeGasGrief(uint256 gas) public {
+      standard{gas: gas}.observe(); // Only calls in which standard doesn't revert
+
+      try optimized{gas: gas}.observe() {} catch {
+        t(false, "Optimized fails when standard succeeds");
+      }
+      
+    }
+
+
     function oPTIMIZED_RelativeTwapWeightedObserver_setValue(uint128 newValue) public {
-      oPTIMIZED_RelativeTwapWeightedObserver.setValue(newValue);
+      optimized.setValue(newValue);
     }
 
     function oPTIMIZED_RelativeTwapWeightedObserver_update() public {
-      oPTIMIZED_RelativeTwapWeightedObserver.update();
+      optimized.update();
     }
 
-    function rEFERENCE_RelativeTwapWeightedObserver_observe() public {
-      rEFERENCE_RelativeTwapWeightedObserver.observe();
-    }
 
     function rEFERENCE_RelativeTwapWeightedObserver_setValue(uint256 newValue) public {
-      rEFERENCE_RelativeTwapWeightedObserver.setValue(newValue);
+      standard.setValue(newValue);
     }
 
     function rEFERENCE_RelativeTwapWeightedObserver_update() public {
-      rEFERENCE_RelativeTwapWeightedObserver.update();
+      standard.update();
     }
 }
