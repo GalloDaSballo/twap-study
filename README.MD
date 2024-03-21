@@ -9,6 +9,7 @@ Release Candidate must meet reference functionality given the following constrai
 - 80 years of operations
 - `valueToTrack` having a maximum value of 100e27 (100 Billion eBTC)
 
+
 ## Goals
 
 - For Spike up, we want to delay those spike ups
