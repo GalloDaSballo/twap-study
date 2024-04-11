@@ -14,3 +14,4 @@ out/
 # Medusa (although corpus is good tbf)
 /medusa
 /echidna
+/crytic-export
